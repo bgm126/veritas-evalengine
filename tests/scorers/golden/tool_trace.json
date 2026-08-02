@@ -1,0 +1,7 @@
+{
+  "expected_calls": [
+    {"tool_name": "fetch_order", "arguments": {"order_id": "12345"}},
+    {"tool_name": "cancel_order", "arguments": {"order_id": "12345"}}
+  ],
+  "expected_accuracy": 1.0
+}

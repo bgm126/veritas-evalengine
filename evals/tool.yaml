@@ -1,0 +1,17 @@
+name: tool_suite
+description: Tool Execution Evaluation Suite
+version: "1.0"
+tasks:
+  - task_id: tool-001
+    task_type: tool
+    prompt: Cancel order #12345
+    expected_tool_calls:
+      - tool_name: fetch_order
+        arguments:
+          order_id: "12345"
+      - tool_name: cancel_order
+        arguments:
+          order_id: "12345"
+    expected_terminal_state: COMPLETED
+    forbidden_actions:
+      - delete_user_account

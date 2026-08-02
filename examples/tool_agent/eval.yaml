@@ -1,0 +1,15 @@
+name: tool_example_suite
+description: Tool Replay Evaluation Example
+version: "1.0"
+tasks:
+  - task_id: tool-example-01
+    task_type: tool
+    prompt: Cancel order #555
+    expected_tool_calls:
+      - tool_name: fetch_order
+        arguments:
+          order_id: "555"
+      - tool_name: cancel_order
+        arguments:
+          order_id: "555"
+    expected_terminal_state: COMPLETED

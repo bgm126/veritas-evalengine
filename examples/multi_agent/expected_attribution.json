@@ -1,0 +1,5 @@
+{
+  "root_agent_id": "agent-analyst",
+  "root_event_id": "evt-2",
+  "description": "Root cause in agent 'agent-analyst' at event 'evt-2'"
+}

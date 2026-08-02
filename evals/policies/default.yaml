@@ -1,0 +1,5 @@
+name: default_policy
+description: Production release policy
+fail_if:
+  - deterministic_failure_count > 0
+  - pass_rate < 1.0

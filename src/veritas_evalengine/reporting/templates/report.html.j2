@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Veritas EvalEngine — {{ suite_name }}</title>
+  <style>
+    {{ css_styles }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Veritas EvalEngine Report</h1>
+      <p style="color: var(--text-secondary);">Suite: {{ suite_name }} | Generated: {{ timestamp }}</p>
+    </header>
+
+    <div class="summary-cards">
+      <div class="card">
+        <div>Total Tasks</div>
+        <div class="val">{{ total_tasks }}</div>
+      </div>
+      <div class="card">
+        <div>Passed</div>
+        <div class="val badge-pass">{{ passed_tasks }}</div>
+      </div>
+      <div class="card">
+        <div>Failed</div>
+        <div class="val badge-fail">{{ failed_tasks }}</div>
+      </div>
+      <div class="card">
+        <div>Policy Verdict</div>
+        <div class="val {% if policy_passed %}badge-pass{% else %}badge-fail{% endif %}">
+          {% if policy_passed %}PASSED{% else %}FAILED{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if policy_violations %}
+    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-fail); border-radius: 0.5rem; padding: 1rem; margin-bottom: 2rem;">
+      <h3 style="color: var(--accent-fail); margin-top: 0;">Policy Violations</h3>
+      <ul>
+        {% for v in policy_violations %}
+        <li>{{ v }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <h2>Task Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Task ID</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Scorer Metrics</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tr in task_results %}
+        <tr>
+          <td><code>{{ tr.task_id }}</code></td>
+          <td><code>{{ tr.task_type }}</code></td>
+          <td>
+            <span class="{% if tr.passed %}badge-pass{% else %}badge-fail{% endif %}">
+              {% if tr.passed %}PASS{% else %}FAIL{% endif %}
+            </span>
+          </td>
+          <td>
+            {% for k, v in tr.metrics.items() %}
+            <span style="font-size: 0.85rem; background: #334155; padding: 0.2rem 0.5rem; border-radius: 0.25rem; margin-right: 0.3rem;">
+              {{ k }}: {{ "%.2f"|format(v) }}
+            </span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

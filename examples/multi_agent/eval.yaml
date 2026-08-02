@@ -1,0 +1,7 @@
+name: multi_agent_example_suite
+description: Multi-Agent Failure Mapping Example
+version: "1.0"
+tasks:
+  - task_id: multi-example-01
+    task_type: multi_agent
+    prompt: Synthesize Q3 revenue from analyst agents.

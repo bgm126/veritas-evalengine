@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "veritas-evalengine"
+version = "0.1.0"
+description = "Universal evaluation engine for RAG, tool-using, coding, and multi-agent systems"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "click>=8.0",
+    "jinja2>=3.1",
+    "numpy>=1.24",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+transformers = [
+    "transformers>=4.36",
+    "torch>=2.1",
+    "accelerate>=0.25",
+]
+llm = [
+    "litellm>=1.30",
+]
+benchmarks = [
+    "datasets>=2.16",
+]
+otel = [
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+]
+all = [
+    "veritas-evalengine[transformers,llm,benchmarks,otel]",
+]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.3",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+veritas-eval = "veritas_evalengine.cli.main:cli"
+
+[project.entry-points."veritas_evalengine.scorers"]
+evidence = "veritas_evalengine.scorers.evidence:EvidenceScorer"
+tool_replay = "veritas_evalengine.scorers.tool_replay:ToolReplayScorer"
+drift = "veritas_evalengine.scorers.drift:DriftScorer"
+fidelity = "veritas_evalengine.scorers.fidelity:PolicyAdherenceScorer"
+judge = "veritas_evalengine.scorers.judge:AbsoluteRubricJudge"
+trace = "veritas_evalengine.scorers.trace:MultiAgentTraceScorer"
+
+[project.entry-points."veritas_evalengine.adapters"]
+generic = "veritas_evalengine.adapters.generic:GenericAgentAdapter"
+otel = "veritas_evalengine.adapters.otel:OTelAdapter"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/veritas_evalengine"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "provider: tests requiring LLM API keys",
+    "slow: long-running tests",
+    "benchmark: benchmark dataset tests",
+]

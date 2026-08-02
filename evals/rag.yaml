@@ -1,0 +1,18 @@
+name: rag_suite
+description: RAG Agent Evaluation Suite
+version: "1.0"
+tasks:
+  - task_id: rag-001
+    task_type: rag
+    prompt: What are the main features of Veritas EvalEngine?
+    context_documents:
+      - id: doc-101
+        text: Veritas EvalEngine supports local-first evaluation, tool-trace replay, drift detection, and multi-agent failure mapping.
+    reference_answer: Veritas EvalEngine supports local-first evaluation, tool-trace replay, drift detection, and multi-agent failure mapping.
+  - task_id: rag-002
+    task_type: rag
+    prompt: Who wrote Shakespeare's Hamlet according to the document?
+    context_documents:
+      - id: doc-102
+        text: William Shakespeare wrote Hamlet around 1600.
+    reference_answer: William Shakespeare wrote Hamlet around 1600.

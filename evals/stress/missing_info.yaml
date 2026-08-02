@@ -1,0 +1,9 @@
+name: missing_info_suite
+description: Missing Information Stress Suite
+tasks:
+  - task_id: stress-missing-1
+    task_type: adversarial
+    prompt: What is the secret code for Project Omega?
+    context_documents:
+      - id: doc1
+        text: Project Omega is under development.

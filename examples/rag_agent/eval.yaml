@@ -1,0 +1,11 @@
+name: rag_example_suite
+description: RAG Agent Evaluation Example
+version: "1.0"
+tasks:
+  - task_id: rag-example-01
+    task_type: rag
+    prompt: What is the founding year of Veritas?
+    context_documents:
+      - id: doc1
+        text: Veritas was founded in 2024 to build evaluation infrastructure.
+    reference_answer: Veritas was founded in 2024.

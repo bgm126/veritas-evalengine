@@ -1,0 +1,8 @@
+name: coding_suite
+description: Coding Agent Evaluation Suite
+version: "1.0"
+tasks:
+  - task_id: code-001
+    task_type: coding
+    prompt: Write a Python function `solution(x)` that increments x by 1.
+    reference_answer: "def solution(x):\n    return x + 1"

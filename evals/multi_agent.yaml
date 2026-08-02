@@ -1,0 +1,7 @@
+name: multi_agent_suite
+description: Multi-Agent System Evaluation Suite
+version: "1.0"
+tasks:
+  - task_id: multi-001
+    task_type: multi_agent
+    prompt: Synthesize Q3 revenue growth from sub-agents.
