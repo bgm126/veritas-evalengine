@@ -167,8 +167,6 @@ class DriftScorer:
         ewma_val = EWMADetector.calculate(series) if series else adherence_score
         cusum_alarm, cusum_score = CUSUMDetector.detect(series) if series else (False, 0.0)
 
-        passed = not cusum_alarm and psi_val < 0.25
-
         metrics = {
             "adherence_score": adherence_score,
             "psi": psi_val,
@@ -179,7 +177,9 @@ class DriftScorer:
 
         return ScorerResult(
             scorer_name=self.name,
-            passed=passed,
+            # History-derived drift signals need an application-specific window
+            # and threshold; they are informational and must not fail a task.
+            passed=None,
             score=adherence_score,
             details={"cusum_alarm": cusum_alarm, "series_length": len(series)},
             metrics=metrics,
