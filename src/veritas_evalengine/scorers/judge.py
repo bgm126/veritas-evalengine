@@ -46,9 +46,8 @@ class PairwiseJudge:
         winner_pos2 = self._judge_pair(prompt, candidate_b, candidate_a)
 
         # Map back to A or B
-        # pos2 winner returned 'candidate_b' means pos2 chose first element which is candidate_b
-        # pos2 winner returned 'candidate_a' means pos2 chose second element which is candidate_a
-        pos2_mapped = "A" if winner_pos2 == "B" else ("B" if winner_pos2 == "A" else "TIE")
+        # In the swapped call, the first argument is the original candidate B.
+        pos2_mapped = "B" if winner_pos2 == "A" else ("A" if winner_pos2 == "B" else "TIE")
 
         is_flipped = winner_pos1 != pos2_mapped and winner_pos1 != "TIE" and pos2_mapped != "TIE"
         final_winner = winner_pos1 if winner_pos1 == pos2_mapped else "TIE"
