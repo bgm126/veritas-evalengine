@@ -14,7 +14,7 @@
 <p align="center">
   <strong>The universal, local-first evaluation engine for AI agent systems.</strong>
   <br/>
-  <em>Evidence-backed. Statistically rigorous. Framework-agnostic. Production-grade.</em>
+  <em>Practical, local-first evaluation for AI agent workflows.</em>
 </p>
 
 <p align="center">
@@ -43,7 +43,7 @@ You built an AI agent — a RAG pipeline, a tool-using assistant, a coding copil
 >
 > *"When my multi-agent system fails, which agent caused it?"*
 
-Most evaluation tools give you a single number. Veritas gives you **evidence**, **confidence intervals**, and **reproducible proof**.
+Treat scores as signals to investigate. Built-in text matching and reference adapters are lightweight examples; they do not replace domain validation, human review, or a model-backed judge. Use representative cases and set release thresholds that match your risk.
 
 ---
 
@@ -66,7 +66,7 @@ veritas-eval report -r report.json -f markdown
 veritas-eval compare -c report.json -b baselines/baseline.json
 ```
 
-**That's it.** Five commands from zero to a statistically rigorous evaluation of your agent.
+The scaffold and CLI runner currently use a reference adapter for demonstration. To evaluate your application, implement the `AgentAdapter` protocol and pass it to `EvalRunner` from Python.
 
 ---
 
@@ -138,9 +138,9 @@ Grounding Rate: 50.0%   Wilson 95% LCB: 9.5%   Contradiction Rate: 50.0%
 - `DeBERTaEntailmentScorer` — Local DeBERTa-v3-large-MNLI (via `[transformers]` extra). No API keys. No data leaves your machine.
 - `LLMJudgeEntailmentScorer` — Provider-neutral fallback via LiteLLM. Works with OpenAI, Anthropic, Google, Cohere, or any OpenAI-compatible endpoint.
 
-### Capability 2 — Semantic Entropy & Uncertainty Quantification
+### Capability 2 — Response variation experiments
 
-Detects hallucination through **information-theoretic uncertainty measurement**:
+The entropy utilities sample responses and group similar answers. Variation can flag questions worth reviewing, but it does not establish correctness:
 
 ```
 Prompt → Sample N completions at temperature T
@@ -149,12 +149,12 @@ Prompt → Sample N completions at temperature T
          ↓
      Semantic equivalence classes {C₁, C₂, ..., Cₖ}
          ↓
-     H(X) = −Σ p(cᵢ) log p(cᵢ)
+     Compare the number and sizes of response groups
          ↓
      High entropy → High uncertainty → Likely hallucination
 ```
 
-**Includes Semantic Entropy Probes (SEP)** — train a lightweight linear probe on hidden-state representations to predict semantic entropy from a single forward pass, achieving up to **300× speedup** over full N-sample generation.
+The hidden-state probe helpers provide a constant baseline only; use a separately validated, model-specific predictor if you need hidden-state analysis.
 
 ### Capability 3 — Deterministic Tool Replay
 
@@ -173,7 +173,7 @@ Records and replays an agent's tool-call trace against typed tool specifications
 
 ### Capability 4 — Judge Reliability Lab
 
-LLM-as-judge is only useful if you can **quantify how reliable the judge is**:
+The package includes basic rubric, pairwise, and agreement utilities. The default rubric judge is a heuristic based on answer text and length; it is not an LLM judge and should not gate releases as-is.
 
 | Metric | What It Measures | Method |
 |:--|:--|:--|
@@ -186,11 +186,11 @@ LLM-as-judge is only useful if you can **quantify how reliable the judge is**:
 
 **Judge modes:** Absolute rubric (1–5), pairwise comparison (with position-bias mitigation), and G-Eval structured scoring.
 
-> **Non-gating by default.** Judge scores are informational until reliability metrics meet configured calibration thresholds.
+Use a separately validated judge implementation for real evaluations, and compare it with human labels before making it a release gate.
 
 ### Capability 5 — Drift & Instruction-Adherence Monitor
 
-Tracks metric distributions across agent versions and deployment windows:
+The optional history scorer records simple per-run signals. Review and version the input data, and tune thresholds to the metric and traffic you care about before treating alerts as operational drift detection.
 
 ```
 Version 1.2 ──────────── Version 1.3 ──────────── Version 1.4
@@ -201,7 +201,7 @@ Version 1.2 ──────────── Version 1.3 ──────�
      └────────────────────────┴────────────────────────┘
 ```
 
-**Detectors:** Population Stability Index (PSI), Exponentially Weighted Moving Average (EWMA), Cumulative Sum (CUSUM) with bilateral change-point detection, and optional embedding cosine distance.
+Available helpers include PSI, EWMA, and CUSUM. These are descriptive signals, not automatically calibrated alerts; the default text-distance measure uses word overlap rather than embeddings.
 
 Run history is stored as **append-only JSONL** — Git-trackable and auditable.
 
@@ -226,7 +226,7 @@ Run history is stored as **append-only JSONL** — Git-trackable and auditable.
 
 ### Capability 7 — Multi-Agent Failure Attribution
 
-When a multi-agent system produces a wrong answer, Veritas builds a **directed trace graph** and identifies the root cause:
+When trace events include parent links and validity labels, the scorer can summarize likely upstream failures. Treat the result as a debugging aid: attribution depends on complete and correct trace data.
 
 ```
 Orchestrator
