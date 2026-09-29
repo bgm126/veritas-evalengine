@@ -83,18 +83,19 @@ class EntailmentScorer(Protocol):
 
 
 class MockEntailmentScorer:
-    """Deterministic offline entailment scorer."""
+    """Offline exact-match check; it does not infer entailment or contradiction."""
 
     def classify(self, claim_text: str, evidence_spans: List[EvidenceSpan]) -> ClaimVerdict:
         if not evidence_spans:
             return ClaimVerdict.UNVERIFIABLE
-        # Check for direct overlap
-        claim_lower = claim_text.lower()
+        claim_normalized = " ".join(re.findall(r"\w+", claim_text.lower()))
+        if not claim_normalized:
+            return ClaimVerdict.UNVERIFIABLE
         for span in evidence_spans:
-            span_lower = span.text.lower()
-            if any(w in span_lower for w in claim_lower.split() if len(w) > 3):
+            evidence_normalized = " ".join(re.findall(r"\w+", span.text.lower()))
+            if claim_normalized in evidence_normalized:
                 return ClaimVerdict.SUPPORTED
-        return ClaimVerdict.CONTRADICTED
+        return ClaimVerdict.UNVERIFIABLE
 
 
 class DeBERTaEntailmentScorer:
