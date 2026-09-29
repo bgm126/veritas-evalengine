@@ -28,6 +28,8 @@ class EvalRunner:
         self.config = config or EvalConfig()
 
     def run_suite(self, suite: EvalSuite, reps: int = 1, seed: int | None = 42) -> EvalReport:
+        if reps < 1:
+            raise ValueError("reps must be at least 1")
         if seed is not None:
             random.seed(seed)
 
@@ -49,7 +51,7 @@ class EvalRunner:
             runs: list[AgentRun] = []
             scorer_results: list[ScorerResult] = []
             task_passed = True
-            task_metrics: dict[str, float] = {}
+            task_metric_samples: dict[str, list[float]] = {}
 
             for rep in range(reps):
                 if seed is not None:
@@ -70,7 +72,7 @@ class EvalRunner:
 
                         for m_key, m_val in res.metrics.items():
                             full_key = f"{scorer.name}.{m_key}"
-                            task_metrics[full_key] = m_val
+                            task_metric_samples.setdefault(full_key, []).append(float(m_val))
                     except Exception as e:
                         err_res = ScorerResult(
                             scorer_name=scorer.name,
@@ -85,6 +87,12 @@ class EvalRunner:
                 passed_tasks += 1
             else:
                 failed_tasks += 1
+
+            task_metrics = {
+                key: sum(values) / len(values)
+                for key, values in task_metric_samples.items()
+                if values
+            }
 
             task_results.append(
                 EvalTaskResult(
